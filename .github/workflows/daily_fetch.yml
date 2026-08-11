@@ -7,13 +7,13 @@ on:
 
 jobs:
   fetch-and-update:
-    runs-on: ubuntu-22.04  # Verwende Ubuntu 22.04 mit Node.js 20
+    runs-on: ubuntu-20.04  # Verwende Ubuntu 20.04 mit Node.js 20
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5.2.0
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
