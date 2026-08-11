@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.1  # Neueste Version
+        uses: actions/checkout@v4.1.2  # Neueste Version mit Node.js 24-Unterstützung
 
       - name: Set up Python
-        uses: actions/setup-python@v5.1.0  # Neueste Version
+        uses: actions/setup-python@v5.2.0  # Neueste Version mit Node.js 24-Unterstützung
         with:
           python-version: "3.11"
 
