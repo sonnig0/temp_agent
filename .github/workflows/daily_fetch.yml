@@ -7,19 +7,13 @@ on:
 
 jobs:
   fetch-and-update:
-    runs-on: ubuntu-latest  # Verwende die neueste Ubuntu-Version
+    runs-on: ubuntu-latest
     steps:
-      # Node.js 20 erzwingen, damit die Actions funktionieren
-      - name: Force Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.4  # Neueste Version, kompatibel mit Node.js 24
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.2.0  # Neueste Version, kompatibel mit Node.js 24
         with:
           python-version: "3.11"
 
