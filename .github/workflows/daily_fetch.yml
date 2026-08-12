@@ -1,14 +1,20 @@
-name: Täglicher Datenabruf und Aktualisierung
+name: Täglicher Datenabruf
 
 on:
   schedule:
-    - cron: "10 10 * * *"  # Täglich um 12:10 Uhr MEZ (10:10 UTC)
-  workflow_dispatch:  # Ermöglicht manuelles Auslösen
+    - cron: "10 10 * * *"  # 12:10 Uhr MEZ
+  workflow_dispatch:  # Manuelles Auslösen
 
 jobs:
   fetch-and-update:
-    runs-on: ubuntu-20.04  # Verwende Ubuntu 20.04 mit Node.js 20
+    runs-on: ubuntu-latest  # Verwende die neueste Ubuntu-Version
     steps:
+      # Node.js 20 erzwingen, damit die Actions funktionieren
+      - name: Force Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -33,5 +39,5 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add weather_data.db
-          git commit -m "Täglicher Datenabruf: $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "Automatischer Datenabruf: $(date +'%Y-%m-%d %H:%M')"
           git push
