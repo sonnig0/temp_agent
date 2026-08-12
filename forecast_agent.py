@@ -88,9 +88,8 @@ def filter_today_data(dataframes):
     return filtered_dataframes
 
 def save_to_sqlite(dataframes, reference_time):
-    """
-    Speichert die gefilterten Daten in einer SQLite-Datenbank.
-    Löscht vorher die alten Daten mit der gleichen reference_time.
+    """Speichert die Prognosedaten in der SQLite-Datenbank.
+    Überschreibt alle bestehenden Prognosen für den heutigen Tag.
     """
     conn = sqlite3.connect("weather_data.db")
     cursor = conn.cursor()
@@ -105,9 +104,11 @@ def save_to_sqlite(dataframes, reference_time):
     )
     """)
 
-    # Alte Daten mit der gleichen reference_time löschen
-    cursor.execute(f"DELETE FROM prognosen WHERE reference_time = '{reference_time}'")
+    # Lösche alle Prognosen für den heutigen Tag (00:00–23:00 Uhr)
+    today = datetime.now().strftime("%Y-%m-%d")
+    cursor.execute(f"DELETE FROM prognosen WHERE DATE(timestamp) = '{today}'")
 
+    # Füge die neue Prognose ein
     for parameter, df in dataframes.items():
         for _, row in df.iterrows():
             cursor.execute(

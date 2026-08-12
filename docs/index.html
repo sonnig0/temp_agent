@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Temperaturvergleich</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Temperaturvergleich: Prognose vs. Ist</h1>
+    <canvas id="chart1"></canvas>
+    <canvas id="chart2"></canvas>
+    <canvas id="chart3"></canvas>
+
+    <script>
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.timestamps;
+
+                new Chart(document.getElementById('chart1'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Prognose', data: data.prognose, borderColor: 'red' },
+                            { label: 'Ist', data: data.ist, borderColor: 'blue' }
+                        ]
+                    }
+                });
+
+                new Chart(document.getElementById('chart2'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Abweichung (%)', data: data.abweichung_pct, backgroundColor: 'orange' }
+                        ]
+                    }
+                });
+
+                new Chart(document.getElementById('chart3'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Abweichung (°C)', data: data.abweichung, borderColor: 'green' }
+                        ]
+                    }
+                });
+            });
+    </script>
+</body>
+</html>

@@ -5,21 +5,24 @@ import plotly.express as px
 from datetime import datetime, timedelta
 
 def load_data():
-    """Lädt die Prognose- und Ist-Daten aus der SQLite-Datenbank."""
+    """Lädt die Prognose- und Ist-Daten aus der SQLite-Datenbank für den heutigen Tag."""
     conn = sqlite3.connect("weather_data.db")
 
-    # Prognosedaten: reference_time = neueste reference_time
-    prognosen_query = """
+    # Neueste Prognose für den heutigen Tag
+    today = datetime.now().strftime("%Y-%m-%d")
+    prognosen_query = f"""
     SELECT timestamp, t2m, reference_time
     FROM prognosen
-    WHERE reference_time = (SELECT MAX(reference_time) FROM prognosen)
+    WHERE DATE(timestamp) = '{today}'
+    AND reference_time = (SELECT MAX(reference_time) FROM prognosen WHERE DATE(timestamp) = '{today}')
     """
     prognosen_df = pd.read_sql(prognosen_query, conn)
 
-    # Ist-Daten
-    ist_daten_query = """
+    # Ist-Daten für den heutigen Tag
+    ist_daten_query = f"""
     SELECT timestamp, TL
     FROM ist_daten
+    WHERE DATE(timestamp) = '{today}'
     """
     ist_daten_df = pd.read_sql(ist_daten_query, conn)
 

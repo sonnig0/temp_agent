@@ -60,9 +60,8 @@ def extract_data(api_response, parameter):
     return df
 
 def save_to_sqlite(dataframes):
-    """
-    Speichert die Ist-Daten in der SQLite-Datenbank.
-    Löscht vorher die alten Daten vom gleichen Tag.
+    """Speichert die Ist-Daten in der SQLite-Datenbank.
+    Überschreibt bestehende Daten für die gleichen Zeitstempel.
     """
     conn = sqlite3.connect("weather_data.db")
     cursor = conn.cursor()
@@ -71,17 +70,17 @@ def save_to_sqlite(dataframes):
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS ist_daten (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp TEXT,
+        timestamp TEXT UNIQUE,  -- UNIQUE-Constraint hinzufügen
         TL REAL
     )
     """)
 
-    # Alte Daten vom gleichen Tag löschen
-    today = datetime.now().strftime("%Y-%m-%d")
-    cursor.execute(f"DELETE FROM ist_daten WHERE timestamp LIKE '{today}%'")
-
+    # Alte Daten für die gleichen Zeitstempel löschen
     for parameter, df in dataframes.items():
         for _, row in df.iterrows():
+            # Lösche den bestehenden Eintrag (falls vorhanden)
+            cursor.execute("DELETE FROM ist_daten WHERE timestamp = ?", (row["timestamp"],))
+            # Füge den neuen Eintrag ein
             cursor.execute(
                 "INSERT INTO ist_daten (timestamp, TL) VALUES (?, ?)",
                 (row["timestamp"], row[parameter])
