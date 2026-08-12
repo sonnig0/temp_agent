@@ -2,18 +2,22 @@ name: Täglicher Datenabruf
 
 on:
   schedule:
-    - cron: "10 10 * * *"  # 12:10 Uhr MEZ
-  workflow_dispatch:  # Manuelles Auslösen
+    - cron: "10 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # ← WICHTIG
 
 jobs:
   fetch-and-update:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4.1.4  # Neueste Version, kompatibel mit Node.js 24
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5.2.0  # Neueste Version, kompatibel mit Node.js 24
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -30,8 +34,8 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git add weather_data.db
-          git commit -m "Automatischer Datenabruf: $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "Automatischer Datenabruf: $(date +'%Y-%m-%d %H:%M')" || echo "Nichts zu committen"
           git push
