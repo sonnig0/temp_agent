@@ -2,7 +2,7 @@ name: Täglicher Datenabruf
 
 on:
   schedule:
-    - cron: "11 10 * * *"
+    - cron: "14 25 * * *"
   workflow_dispatch:
 
 permissions:
