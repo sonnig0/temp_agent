@@ -68,12 +68,20 @@ def main():
     st.divider()
     if 'cache_key' not in st.session_state:
         st.session_state.cache_key = 0
+    if 'reload_msg' not in st.session_state:
+        st.session_state.reload_msg = False
 
     if st.button("🔄 Daten neu laden", type="primary"):
         st.session_state.cache_key += 1
-        st.info("➡️ Daten werden neu geladen...")  # ✅ Hier siehst du, dass es funktioniert!
+        st.session_state.reload_msg = True
+        st.rerun()  # ⚡ App neu starten
 
     df = load_data(start_date, end_date, st.session_state.cache_key)
+
+    # ✅ Meldung NACH dem Laden (wenn Daten da sind)
+    if st.session_state.reload_msg and not df.empty:
+        st.success("✅ Daten wurden neu geladen!")
+        st.session_state.reload_msg = False
 
     if not df.empty:
         st.subheader("📈 Temperaturverlauf (Prognose vs. Ist)")
