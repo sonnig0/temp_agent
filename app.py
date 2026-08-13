@@ -71,6 +71,7 @@ def main():
 
     if st.button("🔄 Daten neu laden", type="primary"):
         st.session_state.cache_key += 1
+        st.info("➡️ Daten werden neu geladen...")  # ✅ Hier siehst du, dass es funktioniert!
 
     df = load_data(start_date, end_date, st.session_state.cache_key)
 
