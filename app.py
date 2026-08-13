@@ -50,6 +50,8 @@ def load_data(start_date, end_date):
         merged_df["Abweichung (%)"] = (merged_df["Abweichung (°C)"] / merged_df["Prognose (°C)"]) * 100
     return merged_df
 
+# [... alle Imports und Funktionen bleiben gleich ...]
+
 def main():
     st.set_page_config(layout="wide")
     st.title("📊 Temperaturvergleich: Prognose vs. Ist-Daten")
@@ -65,7 +67,14 @@ def main():
     with col2:
         end_date = st.date_input("Enddatum", value=today, min_value=min_date, max_value=today)
 
+    # ✅ NEU: Neu-Laden-Button
+    st.divider()
+    if st.button("🔄 Daten neu laden", type="primary"):
+        st.rerun()  # ⚡ Erzwingt Neuladen der gesamten App (inkl. Cache!)
+
     df = load_data(start_date, end_date)
+
+    # [...] Rest bleibt unverändert [...]
 
     if not df.empty:
         st.subheader("📈 Temperaturverlauf (Prognose vs. Ist)")
