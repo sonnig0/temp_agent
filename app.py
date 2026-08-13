@@ -14,14 +14,13 @@ def get_date_bounds():
     return min_date, max_date
 
 @st.cache_data
-def load_data(start_date, end_date):
-    """Lädt die neueste Prognose für jeden Timestamp im Zeitraum"""
+def load_data(start_date, end_date, cache_key):
+    """Lädt die neueste Prognose für jeden Timestamp im Zeitraum (Cache-Key für Neu-Laden)"""
     start_str = start_date.isoformat()
     end_str = end_date.isoformat()
 
     conn = sqlite3.connect("weather_data.db")
 
-    # ✅ Optimiert: Nimm die neueste Prognose pro Timestamp (falls doch Mehrfacheinträge)
     prognosen_query = """
     SELECT p.timestamp, p.t2m
     FROM prognosen p
@@ -50,8 +49,6 @@ def load_data(start_date, end_date):
         merged_df["Abweichung (%)"] = (merged_df["Abweichung (°C)"] / merged_df["Prognose (°C)"]) * 100
     return merged_df
 
-# [... alle Imports und Funktionen bleiben gleich ...]
-
 def main():
     st.set_page_config(layout="wide")
     st.title("📊 Temperaturvergleich: Prognose vs. Ist-Daten")
@@ -67,14 +64,15 @@ def main():
     with col2:
         end_date = st.date_input("Enddatum", value=today, min_value=min_date, max_value=today)
 
-    # ✅ NEU: Neu-Laden-Button
+    # ✅ Neu-Laden-Button mit Cache-Invalidierung
     st.divider()
+    if 'cache_key' not in st.session_state:
+        st.session_state.cache_key = 0
+
     if st.button("🔄 Daten neu laden", type="primary"):
-        st.rerun()  # ⚡ Erzwingt Neuladen der gesamten App (inkl. Cache!)
+        st.session_state.cache_key += 1
 
-    df = load_data(start_date, end_date)
-
-    # [...] Rest bleibt unverändert [...]
+    df = load_data(start_date, end_date, st.session_state.cache_key)
 
     if not df.empty:
         st.subheader("📈 Temperaturverlauf (Prognose vs. Ist)")
